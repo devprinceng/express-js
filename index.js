@@ -10,23 +10,17 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.post('/example', (req, res) => {
-    let data = req.body;
-    console.log(data);
-});
 
-app.get('/example', (req, res) => {
-    res.send('This is GET method')
-});
-
-app.put('/example', (req, res) => {
+app.get('/example/:userId', (req, res) => {
+    let { userId } = req.params;
+    let { name, role } = req.query;
     
-    res.send('this is put method');
+    console.log("name:", name);
+    console.log("role:", role);
+
+    res.send(`User ID:  ${ userId }`);
 });
 
-app.delete('/example', (req, res) => {
-    
-    res.send('this is delete method');
-});
+
 
 app.listen(3000, console.log(`Server running at Port ${PORT}`));
