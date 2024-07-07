@@ -3,50 +3,54 @@ const app = express();
 const PORT = 3000;
 const cookieParser = require('cookie-parser');
 const { render } = require("ejs");
-// create student subroute
-let students = express.Router();
+const mongodb = require('mongodb');
+
+//* connection url
+let con_url = "mongodb://localhost:27017";
+//* create client
+const client = new mongodb.MongoClient(con_url);
+
+//* test connection
+client.connect()
+.then(()=> console.log('Database Connection Successful'))
+.catch((error) => console.log(error));
 
 //parse request to json
 app.use(express.json())
 app.use(cookieParser());
 // set view enginge
 app.set("view engine", "ejs");
-//middleware
-const middleware1 = (req, res, next) => {
-    console.log('Middleware One');
-    next()
-}
-// use middleware
-app.use(middleware1)  ;
 
 app.get('/', (req, res) => {
     res.render('pages/index.ejs')
 })
 
-app.get('/test', (req, res) => {
-    res.render('test.ejs', {
-        name: 'Dev Prince NG'
-    })
-})
+//create database instance
+const db = client.db('SchoolDb');
+//create collection
+const students = db.collection('students')
 
-app.get('/example',(req, res) =>{
-    res.format({
-        'text/plain': ()=>{
-            res.send('hello world')
-        },
-        'text/html' : ()=> {
-            res.render('pages/index.ejs')
-        },
-        'application/json': ()=> {
-            res.send({
-                name: "Dev Prince NG",
-                email: "devprinceng@gmail.com"
-            })
-        },
-        default: () => {
-            res.send('Nothing Matched')
-        }
+//! insert data into students table;
+app.post('/students', (req, res, next) => {
+    const { name, regno, department, age, phone } = req.body;
+    const student = students.insertOne({
+        name,
+        regno,
+        department,
+        age,
+        phone
     })
-})
+    .then( () => res.status(201).send('Student Created Successfully'))
+    .catch((error) => res.status(500).send(error.message));
+});
 
+//* insert data into students table;
+app.post('/students/many', (req, res, next) => {
+    //* register array of students in request body
+    const student = students.insertMany(req.body)
+    .then( () => res.status(201).send('Students Created Successfully'))
+    .catch((error) => res.status(500).send(error.message));
+});
+
+//! listen on server
 app.listen(3000, console.log(`Server running at Port ${PORT}`));
