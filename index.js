@@ -52,5 +52,26 @@ app.post('/students/many', (req, res, next) => {
     .catch((error) => res.status(500).send(error.message));
 });
 
+//find students by regno; department or all students
+app.get('/students/', (req, res) => {
+    const regno = req.query.regno;
+    const department = req.query.department;
+    if (regno) {
+        students.findOne({regno: regno.toUpperCase()})
+        .then((data) => res.status(200).json(data))
+        .catch((error) => res.status(404).send(error.message));
+    }
+    if (department) {
+        students.find({department}).toArray()
+        .then((data) => res.status(200).json(data))
+        .catch((error) => res.status(404).send(error.message));
+    }
+    else{
+        students.find().toArray()
+        .then((data) => res.status(200).json(data))
+        .catch((error) => res.status(404).send(error.message));
+    }
+})
+
 //! listen on server
 app.listen(3000, console.log(`Server running at Port ${PORT}`));
