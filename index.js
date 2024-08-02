@@ -21,6 +21,27 @@ StudentSchema = mongoose.Schema({
 //setup student model
 Student = mongoose.model('student', StudentSchema);
 
+// add student to database
+app.post('/students/single', async (req, res, next) => {
+    try {
+        const { name, regno, department, age, phone, email } = req.body;
+
+       const student = new Student({
+            name,
+            regno,
+            department,
+            age,
+            phone,
+            email
+        });
+        //save student
+        await student.save()
+
+        res.status(201).json({message: 'Student Created Successully', student})
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+})
 const errorMiddleware = (error, req, res, next) => {
     res.status(500).send(error.message);
 };
