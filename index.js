@@ -86,5 +86,29 @@ app.put('/students', (req, res, next) => {
             res.status(500).json({message: error.message});
         })
 })
+// update many endpoint
+app.put('/students/updateMany', (req, res, next) => {
+    const {age} = req.query;
+    // console.log(age);
+    const {department} = req.body;
+    students.updateMany({age: parseInt(age)}, {$set: {department}})
+        .then((data) => {
+            console.log(data);
+            res.status(200).json({message: "Students Updated Successfuly"});
+        })
+        .catch((error) => {
+            res.status(500).json({message: error.message});
+        })
+})
+
+app.delete('/students', (req, res, next) => {
+    const {email} = req.query;
+
+    students.findOneAndDelete({email})
+        .then( () => res.status(200)
+        .json({message: 'Student deleted successfully'}))
+        .catch((error) => res.status(500).json({message: error.message}));
+})
+
 //! listen on server
 app.listen(3000, console.log(`Server running at Port ${PORT}`));
