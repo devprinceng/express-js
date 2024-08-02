@@ -101,12 +101,23 @@ app.put('/students/updateMany', (req, res, next) => {
         })
 })
 
+//delete endpoint
 app.delete('/students', (req, res, next) => {
     const {email} = req.query;
 
     students.findOneAndDelete({email})
         .then( () => res.status(200)
         .json({message: 'Student deleted successfully'}))
+        .catch((error) => res.status(500).json({message: error.message}));
+})
+
+//delete many endpoint
+app.delete('/students/deleteMany', (req, res, next) => {
+    const {department} = req.query;
+    //delete all data matching department
+    students.deleteMany({department})
+        .then( () => res.status(200)
+        .json({message: 'Students deleted successfully'}))
         .catch((error) => res.status(500).json({message: error.message}));
 })
 
