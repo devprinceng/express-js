@@ -7,7 +7,7 @@ const PORT = 3000;
 
 //* connection url
 const connectionUrl = 'mongodb://localhost:27017/SchoolDb';
-mongoose.connect(connectionUrl).then( () => console.log('Database connection successful')).catch((error) => res.status(500).send(error.message));
+mongoose.connect(connectionUrl).then( () => console.log('Database connection successful')).catch((error) => console.log(error));
 
 //setup student Schema
 StudentSchema = mongoose.Schema({
@@ -40,6 +40,18 @@ app.post('/students/single', async (req, res, next) => {
         res.status(201).json({message: 'Student Created Successully', student})
     } catch (error) {
         res.status(500).send(error.message);
+    }
+})
+//add multiple data
+app.post('/students/multiple', async (req, res, next) => {
+    try {
+        const students = req.body; //array of students
+        // console.log(students);
+        const documents = await Student.insertMany(students);
+
+        res.status(201).send(documents)
+    } catch (error) {
+        res.status(500).send(error);
     }
 })
 const errorMiddleware = (error, req, res, next) => {
