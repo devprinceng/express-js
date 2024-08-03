@@ -83,13 +83,27 @@ app.put('/students/single/:email', async(req, res, next) => {
         const { department } = req.body;
 
         // const student= await Student.findById(id);
-        const student= await Student.findOne({email});
+        const student = await Student.findOne({email});
         student.department = department;
         await student.save();
 
         res.status(200).send('Student Updated Successfully');
     } catch (error) {
       res.status(500).send(error);
+    }
+})
+// update multiple documents
+app.put('/students/multiple', async (req, res, next) => {
+    try {
+
+        const {dept} = req.query;
+        const {age} = req.body;
+
+        await Student.updateMany({department:dept}, {age:age});
+        
+        res.status(200).send('Student updated successfully');
+    } catch (error) {
+        res.status(500).json({message: error.message})
     }
 })
 
