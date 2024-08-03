@@ -185,6 +185,25 @@ app.delete('/students/single/:id', async(req, res, next) => {
         res.status(500).send(error.message)
     }
 })
+// delete students by department
+app.delete('/students/multiple', async(req, res, next) => {
+    try {
+        const { department } = req.query;
+        //check if department exist;
+        const dept = await Student.findOne({department});
+        if(dept){
+            const students = await Student.deleteMany({department});
+            return res.status(200)
+                .json({message: "Students department deleted Succcessfully", students});
+        }else{
+            return res.status(404)
+            .json({message: "department not found"});
+        }
+    }
+         catch (error) {
+        res.status(500).send(error.message)
+    }
+})
 
 //error middleware
 const errorMiddleware = (error, req, res, next) => {
