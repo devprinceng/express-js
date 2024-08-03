@@ -1,4 +1,5 @@
 const express = require("express");
+const { ObjectId } = require("mongodb");
 const mongoose = require('mongoose');
 
 const app = express();
@@ -32,7 +33,7 @@ app.get('/students', async(req, res, next) => {
     
 })
 // add student to database
-app.post('/students/single', async (req, res, next) => {
+app.post('/students', async (req, res, next) => {
     try {
         const { name, regno, department, age, phone, email } = req.body;
 
@@ -112,7 +113,27 @@ app.get('/students/single', async (req, res, next) => {
         const {regno} = req.query;
         const student = await Student.findOne({regno});
         if (student){
-            res.status(200).json({data: student});
+           return res.status(200).json({data: student});
+        }else{
+            return res.status(404).json({message: "Student Not Found"});
+        }
+        
+    } catch (error) {
+       return res.status(500).json({message: error.message})
+    }
+})
+
+// find single document by id
+app.get('/students/single/:id', async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        if (!ObjectId.isValid(id)){
+           return res.status(400).json({message: 'Invalid Student Id'})
+        }
+        const student = await Student.findById(id);
+        if (student){
+            return res.status(200).json({data: student});
         }else{
             res.status(404).json({message: "Student Not Found"});
         }
@@ -121,7 +142,18 @@ app.get('/students/single', async (req, res, next) => {
         res.status(500).json({message: error.message})
     }
 })
-
+// read students
+app.get('/students/multiple', async(req, res, next) => {
+    try {
+        const { department } = req.query;
+        console.log(department);
+        const students = await Student.find({department:department});
+        res.status(200).json({data: students});
+    } catch (error) {
+        res.status(500).send(error)
+    }
+    
+})
 //error middleware
 const errorMiddleware = (error, req, res, next) => {
     res.status(500).send(error.message);
