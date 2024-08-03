@@ -106,6 +106,21 @@ app.put('/students/multiple', async (req, res, next) => {
         res.status(500).json({message: error.message})
     }
 })
+// find single document
+app.get('/students/single', async (req, res, next) => {
+    try {
+        const {regno} = req.query;
+        const student = await Student.findOne({regno});
+        if (student){
+            res.status(200).json({data: student});
+        }else{
+            res.status(404).json({message: "Student Not Found"});
+        }
+        
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
 
 //error middleware
 const errorMiddleware = (error, req, res, next) => {
