@@ -153,16 +153,36 @@ app.get('/students/multiple', async(req, res, next) => {
         res.status(500).send(error)
     }
 })
-// read multiple students
+// delete single student
 app.delete('/students/single', async(req, res, next) => {
     try {
         const { email } = req.query;
         
-        const students = await Student.findOneAndDelete({email});
+        const student = await Student.findOneAndDelete({email});
         res.status(200)
-            .json({message: "Student deleted Succcessfully",data: students});
+            .json({message: "Student deleted Succcessfully",data: student});
     } catch (error) {
         res.status(500).send(error)
+    }
+})
+// delete student by id
+app.delete('/students/single/:id', async(req, res, next) => {
+    try {
+        const { id } = req.params;
+        
+        if(!ObjectId.isValid(id)){
+            return res.status(400).json({message: "Invalid Student Id"});
+        }
+        const student = await Student.findByIdAndDelete(id);
+        if (student){
+            return res.status(200)
+            .json({message: "Student deleted Succcessfully",data: student});
+        }else{
+            return res.status(404)
+            .json({message: "Student not Found"});
+        }
+    } catch (error) {
+        res.status(500).send(error.message)
     }
 })
 
