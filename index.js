@@ -65,7 +65,7 @@ app.post('/students/multiple', async (req, res, next) => {
     }
 })
 // find one and update
-app.put('/students', async(req, res, next) => {
+app.put('/students/single', async(req, res, next) => {
     try {
         const { email } = req.query;
         const { department } = req.body;
@@ -76,8 +76,8 @@ app.put('/students', async(req, res, next) => {
     }
 })
 
-// find by id
-app.put('/students/:email', async(req, res, next) => {
+// using params values
+app.put('/students/single/:email', async(req, res, next) => {
     try {
         const { email } = req.params;
         const { department } = req.body;
