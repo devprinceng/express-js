@@ -142,18 +142,30 @@ app.get('/students/single/:id', async (req, res, next) => {
         res.status(500).json({message: error.message})
     }
 })
-// read students
+// read multiple students
 app.get('/students/multiple', async(req, res, next) => {
     try {
         const { department } = req.query;
-        console.log(department);
+        
         const students = await Student.find({department:department});
         res.status(200).json({data: students});
     } catch (error) {
         res.status(500).send(error)
     }
-    
 })
+// read multiple students
+app.delete('/students/single', async(req, res, next) => {
+    try {
+        const { email } = req.query;
+        
+        const students = await Student.findOneAndDelete({email});
+        res.status(200)
+            .json({message: "Student deleted Succcessfully",data: students});
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
 //error middleware
 const errorMiddleware = (error, req, res, next) => {
     res.status(500).send(error.message);
